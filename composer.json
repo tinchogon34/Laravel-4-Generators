@@ -1,5 +1,5 @@
 {
-    "name": "way/generators",
+    "name": "mdsys/laravel_generators",
     "description": "Laravel 4 Generators",
     "keywords": ["laravel", "generators", "artisan"],
     "authors": [
