@@ -32,11 +32,11 @@ class ResourceGenerator {
      */
     public function updateRoutesFile($name)
     {
-        $name = strtolower(Pluralizer::plural($name));
+        $name = Pluralizer::plural($name);
 
         $this->file->append(
             app_path() . '/routes.php',
-            "\n\nRoute::resource('" . $name . "', '" . ucwords($name) . "Controller');"
+            "\n\nRoute::resource('" . $this->decamelize($name) . "', '" . $name . "Controller');"
         );
     }
 
@@ -57,4 +57,15 @@ class ResourceGenerator {
         }
     }
 
+    public static function decamelize($word)
+    {
+        $callback = create_function('$matches',
+            'return strtolower(strlen("$matches[1]") ? "$matches[1]_$matches[2]" : "$matches[2]");');
+
+        return preg_replace_callback(
+            '/(^|[a-z])([A-Z])/',
+            $callback,
+            $word
+        );
+    }
 }

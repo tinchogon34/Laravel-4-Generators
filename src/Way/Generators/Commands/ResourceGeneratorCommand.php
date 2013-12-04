@@ -86,7 +86,6 @@ class ResourceGeneratorCommand extends Command {
         {
             $this->generateTest();
         }
-
         $this->generator->updateRoutesFile($this->model);
         $this->info('Updated ' . app_path() . '/routes.php');
 
@@ -190,7 +189,7 @@ class ResourceGeneratorCommand extends Command {
     protected function generateViews()
     {
         $viewsDir = app_path().'/views';
-        $container = $viewsDir . '/' . Pluralizer::plural($this->model);
+        $container = $viewsDir . '/' . $this->decamelize(Pluralizer::plural($this->model));
         $layouts = $viewsDir . '/layouts';
         $views = array('index', 'show', 'create', 'edit');
 
@@ -283,6 +282,18 @@ class ResourceGeneratorCommand extends Command {
         return array(
             array('path', null, InputOption::VALUE_OPTIONAL, 'The path to the migrations folder', app_path() . '/database/migrations'),
             array('fields', null, InputOption::VALUE_OPTIONAL, 'Table fields', null)
+        );
+    }
+
+    protected static function decamelize($word)
+    {
+        $callback = create_function('$matches',
+            'return strtolower(strlen("$matches[1]") ? "$matches[1]_$matches[2]" : "$matches[2]");');
+
+        return preg_replace_callback(
+            '/(^|[a-z])([A-Z])/',
+            $callback,
+            $word
         );
     }
 

@@ -43,20 +43,15 @@ class {{className}} extends BaseController {
 	 */
 	public function store()
 	{
-		$input = Input::all();
-		$validation = Validator::make($input, {{Model}}::$rules);
 
-		if ($validation->passes())
-		{
-			$this->{{model}}->create($input);
+		${{model}} = new {{Model}}(Input::all());
 
-			return Redirect::route('{{models}}.index');
-		}
+    if (${{model}}->save())
+    {
+        return Redirect::route('{{models}}.index');
+    }
 
-		return Redirect::route('{{models}}.create')
-			->withInput()
-			->withErrors($validation)
-			->with('message', 'There were validation errors.');
+    return Redirect::back()->withInput()->withErrors(${{model}}->getErrors());
 	}
 
 	/**
@@ -99,20 +94,13 @@ class {{className}} extends BaseController {
 	public function update($id)
 	{
 		$input = array_except(Input::all(), '_method');
-		$validation = Validator::make($input, {{Model}}::$rules);
-
-		if ($validation->passes())
-		{
-			${{model}} = $this->{{model}}->find($id);
-			${{model}}->update($input);
-
+		${{model}} = $this->{{model}}->find($id);
+		
+		if(${{model}}->update($input)){
 			return Redirect::route('{{models}}.show', $id);
 		}
 
-		return Redirect::route('{{models}}.edit', $id)
-			->withInput()
-			->withErrors($validation)
-			->with('message', 'There were validation errors.');
+	 	return Redirect::back()->withInput()->withErrors(${{model}}->getErrors());
 	}
 
 	/**

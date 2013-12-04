@@ -3,7 +3,7 @@
 namespace Way\Generators\Generators;
 
 class MigrationGenerator extends Generator {
-
+    
     /**
      * Fetch the compiled template for a migration
      *
@@ -13,6 +13,7 @@ class MigrationGenerator extends Generator {
      */
     protected function getTemplate($template, $name)
     {
+
         // We begin by fetching the master migration stub.
         $stub = $this->file->get(__DIR__.'/templates/migration/migration.txt');
 
@@ -43,7 +44,7 @@ class MigrationGenerator extends Generator {
         list($action, $tableName) = $this->parseMigrationName($name);
 
         $this->action = $action;
-        $this->tableName = $tableName;
+        $this->tableName = $this->decamelize($tableName);
         $this->fields = $fields;
 
         return $this;
@@ -286,6 +287,18 @@ class MigrationGenerator extends Generator {
         $migrationFile = strtolower(basename($path));
 
         return dirname($path).'/'.date('Y_m_d_His').'_'.$migrationFile;
+    }
+
+   protected static function decamelize($word)
+    {
+        $callback = create_function('$matches',
+            'return strtolower(strlen("$matches[1]") ? "$matches[1]_$matches[2]" : "$matches[2]");');
+
+        return preg_replace_callback(
+            '/(^|[a-z])([A-Z])/',
+            $callback,
+            $word
+        );
     }
 
 }

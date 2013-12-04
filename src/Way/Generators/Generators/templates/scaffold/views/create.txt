@@ -2,22 +2,20 @@
 
 @section('main')
 
-<h1>Create {{Model}}</h1>
+<h1>{{ trans('views.create_title') }} {{ trans('models.views.{{model}}.name') }}</h1>
 
-{{ Form::open(array('route' => '{{models}}.store')) }}
-	<ul>
-{{formElements}}
-		<li>
-			{{ Form::submit('Submit', array('class' => 'btn btn-info')) }}
-		</li>
-	</ul>
-{{ Form::close() }}
+{{ Former::horizontal_open()
+  ->id('{{model}}_create_form')
+  ->secure()  
+  ->route("{{models}}.store") }}
 
-@if ($errors->any())
-	<ul>
-		{{ implode('', $errors->all('<li class="error">:message</li>')) }}
-	</ul>
-@endif
+  {{formElements}}
+
+  {{ Former::actions()
+    ->large_primary_submit(trans('views.create_button'))
+    ->large_inverse_reset(trans('views.reset_form')) }}
+
+{{ Former::close() }}
 
 @stop
 

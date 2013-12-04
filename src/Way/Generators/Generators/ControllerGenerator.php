@@ -17,7 +17,7 @@ class ControllerGenerator extends Generator {
     protected function getTemplate($template, $className)
     {
         $this->template = $this->file->get($template);
-        $resource = strtolower(Pluralizer::plural(
+        $resource = $this->decamelize(Pluralizer::plural(
             str_ireplace('Controller', '', $className)
         ));
 
@@ -40,10 +40,10 @@ class ControllerGenerator extends Generator {
      */
     protected function getScaffoldedController($template, $className)
     {
-        $model = $this->cache->getModelName();  // post
-        $models = Pluralizer::plural($model);   // posts
-        $Models = ucwords($models);             // Posts
-        $Model = Pluralizer::singular($Models); // Post
+        $Model = $this->cache->getModelName();  // MousePad
+        $Models = Pluralizer::plural($Model);   // MousePads
+        $model = $this->decamelize($Model); // mouse_pad
+        $models = Pluralizer::plural($model);   // mouse_pads
 
         foreach(array('model', 'models', 'Models', 'Model', 'className') as $var)
         {
@@ -51,5 +51,17 @@ class ControllerGenerator extends Generator {
         }
 
         return $this->template;
+    }
+
+    protected static function decamelize($word)
+    {
+        $callback = create_function('$matches',
+            'return strtolower(strlen("$matches[1]") ? "$matches[1]_$matches[2]" : "$matches[2]");');
+
+        return preg_replace_callback(
+            '/(^|[a-z])([A-Z])/',
+            $callback,
+            $word
+        );
     }
 }

@@ -2,21 +2,21 @@
 
 @section('main')
 
-<h1>Edit {{Model}}</h1>
-{{ Form::model(${{model}}, array('method' => 'PATCH', 'route' => array('{{models}}.update', ${{model}}->id))) }}
-	<ul>
-{{formElements}}
-		<li>
-			{{ Form::submit('Update', array('class' => 'btn btn-info')) }}
-			{{ link_to_route('{{models}}.show', 'Cancel', ${{model}}->id, array('class' => 'btn')) }}
-		</li>
-	</ul>
-{{ Form::close() }}
+<h1>{{ trans('views.edit_title') }} {{ trans('models.views.{{model}}.name') }}</h1>
+{{ Former::horizontal_open()
+  ->id('{{model}}_edit_form')
+  ->secure()
+  ->route("{{models}}.update",${{model}}->id)
+  ->method("PATCH")}}
 
-@if ($errors->any())
-	<ul>
-		{{ implode('', $errors->all('<li class="error">:message</li>')) }}
-	</ul>
-@endif
+  {{ Former::populate(${{model}}) }}
+
+  {{formElements}}
+
+  {{ Former::actions()
+    ->large_primary_submit(trans('views.edit_button'))
+    ->large_inverse_reset(trans('views.reset_form')) }}
+
+{{ Former::close() }}
 
 @stop
